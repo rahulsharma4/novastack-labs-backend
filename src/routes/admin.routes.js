@@ -69,9 +69,9 @@ router.get('/blogs', async (req, res) => {
 });
 
 router.post('/blogs', authAdmin, async (req, res) => {
-  const { title, category, author, role, date, summary, tags, readTime } = req.body;
+  const { title, category, author, role, date, summary, tags, readTime, content, cssContent, imageUrl, slug, status } = req.body;
   try {
-    const post = new Blog({ title, category, author, role, date, summary, tags, readTime });
+    const post = new Blog({ title, category, author, role, date, summary, tags, readTime, content, cssContent, imageUrl, slug, status });
     await post.save();
     res.status(201).json(post);
   } catch (error) {

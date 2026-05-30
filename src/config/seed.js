@@ -255,11 +255,47 @@ const initialBlogs = [
 
 export const seedBlogs = async () => {
   try {
-    const count = await Blog.countDocuments();
-    if (count === 0) {
-      await Blog.insertMany(initialBlogs);
-      console.log('Database Seeding: Pre-populated 25 technology articles successfully.');
-    }
+    // Clear old seeded documents to update to the new schema
+    await Blog.deleteMany({});
+    
+    const seededList = initialBlogs.map((b, idx) => {
+      const slug = b.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const content = `
+        <div class="blog-rich-text">
+          <h2 class="text-md font-bold text-slate-900 mb-4">${b.title}</h2>
+          <p class="text-slate-700 leading-relaxed mb-6">${b.summary}</p>
+          <h3 class="text-sm font-bold text-slate-800 mb-3">Key Technical Principles</h3>
+          <p class="text-slate-600 leading-relaxed mb-4">When developing enterprise systems, architectural decisions dictate scaling boundaries. By prioritizing cache layers, compounding database indexes, and streamlining frontends, application responsiveness increases by orders of magnitude.</p>
+          <ul class="list-disc pl-5 text-slate-600 flex flex-col gap-2 mb-6">
+            <li><strong>Optimized Performance:</strong> Minimize server loads and response metrics.</li>
+            <li><strong>Secured Datasets:</strong> Restrict system inputs using validation pipelines.</li>
+            <li><strong>Automated Scaling:</strong> Coordinate network resources during spike periods.</li>
+          </ul>
+          <p class="text-slate-600 leading-relaxed">This post outlines the exact mitigation scripts we employ at NovaStack Labs to reduce query latency, partition database nodes, and cache configurations.</p>
+        </div>
+      `;
+      // Premium Unsplash developer/server stock photos
+      const images = [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=60", 
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=60", 
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=60", 
+        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&auto=format&fit=crop&q=60", 
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&auto=format&fit=crop&q=60"
+      ];
+      const imageUrl = images[idx % images.length];
+
+      return {
+        ...b,
+        slug,
+        content,
+        cssContent: ".blog-rich-text h2 { color: #4f46e5; }",
+        imageUrl,
+        status: "Published"
+      };
+    });
+
+    await Blog.insertMany(seededList);
+    console.log('Database Seeding: Pre-populated 25 technology articles with rich layouts successfully.');
   } catch (error) {
     console.error('Database Seeding Error:', error);
   }
