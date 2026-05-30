@@ -68,6 +68,16 @@ router.get('/blogs', async (req, res) => {
   }
 });
 
+router.get('/blogs/:slug', async (req, res) => {
+  try {
+    const post = await Blog.findOne({ slug: req.params.slug });
+    if (!post) return res.status(404).json({ message: 'Blog post not found' });
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.post('/blogs', authAdmin, async (req, res) => {
   const { title, category, author, role, date, summary, tags, readTime, content, cssContent, imageUrl, slug, status } = req.body;
   try {
