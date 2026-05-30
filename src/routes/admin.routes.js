@@ -89,6 +89,26 @@ router.delete('/blogs/:id', authAdmin, async (req, res) => {
   }
 });
 
+router.delete('/contacts/:id', authAdmin, async (req, res) => {
+  try {
+    const deleted = await Contact.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'Contact not found' });
+    res.status(200).json({ message: 'Contact inquiry deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.delete('/applications/:id', authAdmin, async (req, res) => {
+  try {
+    const deleted = await Application.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'Application not found' });
+    res.status(200).json({ message: 'Application deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // 4. Admin Auth Verification
 router.post('/admin/verify', (req, res) => {
   const { passcode } = req.body;
