@@ -89,6 +89,21 @@ router.post('/blogs', authAdmin, async (req, res) => {
   }
 });
 
+router.put('/blogs/:id', authAdmin, async (req, res) => {
+  const { title, category, author, role, date, summary, tags, readTime, content, cssContent, imageUrl, slug, status } = req.body;
+  try {
+    const updated = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { title, category, author, role, date, summary, tags, readTime, content, cssContent, imageUrl, slug, status },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ message: 'Post not found' });
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 router.delete('/blogs/:id', authAdmin, async (req, res) => {
   try {
     const deleted = await Blog.findByIdAndDelete(req.params.id);
